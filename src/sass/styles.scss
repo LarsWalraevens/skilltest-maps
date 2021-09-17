@@ -1,0 +1,20 @@
+// example: https://github.com/version-1/smacss-sample/tree/master/css/scss
+@import 'mixins/*';
+
+// colors and other variables
+@import '01_fundaments/**/*.scss';
+
+// single element tags -> fill in first with design!
+@import '02_base/**/*.scss';
+
+// page sections (holds modules)
+@import '03_layout/**/*.scss';
+
+// modules/components of pages
+@import '04_module/**/**/*.scss';
+
+// modules or layouts in different states
+@import '05_state/**/*.scss';
+
+// look of theme (module & layout lvl)
+@import '06_theme/**/*.scss';

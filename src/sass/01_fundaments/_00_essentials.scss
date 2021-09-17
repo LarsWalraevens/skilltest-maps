@@ -1,0 +1,122 @@
+$font--regular : "Calibri",sans-serif;
+$font--sec : "Montserrat",sans-serif;
+$colors:(
+  "white":        #FFFFFF,
+  "silver":       #96ABD6,
+  "lightblue":    #11B4DA,
+  "darkblue":     #042A4C,
+  "darkocean":    #09355E,
+  "background":   #0A192F,
+);
+
+$fontSizes: (
+    h1:         35px,
+    h2:         30px,
+    h3:         25px,
+    h4:         20px,
+
+    xsmall:     14px,
+    small:      16px,
+    regular:    18px,
+    medium:     20px,
+    large:      25px,
+    xlarge:     30px,
+    xxlarge:    35px,
+    button-xl:  20px,
+);
+
+$fontWeights: (
+    'bold':          700,
+    'semi-bold':     600,
+    'medium':        550,
+    'regular':       400,
+);
+
+$gaps: 25;
+$gap: 4px;
+
+$sections: (
+    1:  300px,
+    2:  400px,
+    3:  536px,
+    4:  620px,
+    5:  800px,
+    6:  980px,
+    7:  1024px,
+    8:  1140px,
+    9:  1340px,
+    10: 2000px,
+);
+
+$mq_mobile_portrait: 0;
+$mq_mobile_landscape: 468px;
+
+$mq_tablet_portrait: 768px;
+$mq_tablet_landscape: 1024px;
+
+$mq_desktop_sd: 1366px;
+$mq_desktop: 1440px;
+
+$mq_desktop_hd: 1600px;
+$mq_desktop_up: 1920px;
+
+
+//global variables
+$gl-padding: 2rem;
+$gl-width:935px;
+$gl-width-small: 832px;
+
+
+$sm-width:392px;
+$md-width:692px;
+$lg-width:902px;
+$xl-width:1460px;
+$xxl-width:1960px;
+
+@mixin bp($point, $limiter: min) {
+  @if $point == sm {
+    @media only screen and (max-width: ($sm-width)) { @content; }
+  }
+  @else if $point == md {
+    @media only screen and (max-width: ($md-width)) { @content; }
+  }
+  @else if $point == lg {
+    @media only screen and (max-width: ($lg-width)) { @content; }
+  }
+  @else if $point == xl {
+  @media only screen and (max-width: $xl-width) { @content; }
+  }
+  @else if $point == xxl {
+  @media only screen and (max-width: $xxl-width) { @content; }
+  }
+  @else {
+  @content;
+  }
+}
+@mixin gl-padding {
+  padding-left: $gl-padding;
+  padding-right: $gl-padding;
+}
+
+@mixin container($width) {
+  margin: auto;
+  max-width: $width;
+  padding-left: $gl-padding;
+  padding-right: $gl-padding;
+}
+
+@mixin bootstrap-grid {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-right: -1rem;
+  margin-left: -1rem;
+
+  > * {
+    display: flex;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
