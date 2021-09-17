@@ -78,17 +78,16 @@ const Loc = (props) => {
     return (
         <div id='loc' style={{marginTop:"100px"}}>
             <Row className="map-result">
-                <Col span={8} id="result-list">
-                    <h2>List of results</h2>
+                <Col span={5} id="result-list">
                 </Col>
-                <Col span={16} id="result-map" style={{height:"80vh"}}>
+                <Col span={19} id="result-map" style={{height:"80vh"}}>
                     <div style={{textAlign:"left", marginBottom:"40px"}}>
                         <h1>Look up a place</h1>
                         <div>
                             <Search placeholder="Street, adress, city, ..." onSearch={onSearch} style={{ width: 400 }} />  
                         </div>
                     </div>
-                    <MapContainer whenCreated={setMap} center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
+                    <MapContainer style={{boxShadow: "4px 4px 5px -2px rgb(0 0 0 / 55%)", borderRadius:"10px"}} whenCreated={setMap} center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
                         <TileLayer
                         attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
                         url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
