@@ -48,27 +48,20 @@ const Loc = (props) => {
         for (const result of parsedResult) {
             const li = document.createElement('li');
             li.classList.add('list-group-item', 'list-group-item-action');
-            // li.innerHTML = result.display_name;
-            // li.setAttribute("data", JSON.stringify({
-            //         displayName: result.display_name,
-            //         lat: result.lat,
-            //         lon: result.lon
-            //     }, undefined, 2));
+            li.innerHTML = result.display_name;
+            li.setAttribute("data", JSON.stringify({
+                    displayName: result.display_name,
+                    lat: result.lat,
+                    lon: result.lon
+                }, undefined, 2));
 
-            li.innerHTML = JSON.stringify({
-                displayName: result.display_name,
-                lat: result.lat,
-                lon: result.lon
-            }, undefined, 2);
             li.addEventListener('click', (event) => {
                 for(const child of resultList.children) {
                     child.classList.remove('active');
                 }
                 event.target.classList.add('active');
-                const clickedData = JSON.parse(event.target.innerHTML);
-                console.log((event.target));
+                const clickedData = JSON.parse(event.target.getAttribute("data"));
                 const position = new L.LatLng(clickedData.lat, clickedData.lon);
-                console.log(map)
                 map.setView(position, 17);
             })
             // currentMarkers.push(new L.marker(position).addTo(map));
@@ -77,38 +70,27 @@ const Loc = (props) => {
         }
     }
   
-    function handleSetView(newlat, newlon) {
-        map.setView([newlat, newlon], defaultZoom);
-    }
-
-        return (
-            <div id='loc' style={{marginTop:"100px"}}>
-                <h1>Look up a place</h1>
-                <div>
-                    <Search placeholder="Search" onSearch={onSearch} style={{ width: 400 }} />  
+    return (
+        <div id='loc' style={{marginTop:"100px"}}>
+            <h1>Look up a place</h1>
+            <div>
+                <Search placeholder="Search" onSearch={onSearch} style={{ width: 400 }} />  
+            </div>
+            <div className="map-result">
+                <div id="result-list">
+                    <h2>List of results</h2>
                 </div>
-                <div className="map-result">
-                    <div id="result-list">
-                        <h2>List of results</h2>
-                        {/* <ul>
-                            {
-                                // (suggestions).map((item, index) => {
-                                //     return (<li onClick={()=>handleSetView(item.lat, item.lon)}>{item.display_name}</li>);
-                                // })
-                            }
-                        </ul> */}
-                    </div>
-                    <div id="result-map" style={{height:"50vh"}}>
-                    <MapContainer whenCreated={setMap} center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
-                        <TileLayer
-                            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        />
-                    </MapContainer>
-                    </div>
+                <div id="result-map" style={{height:"50vh"}}>
+                <MapContainer whenCreated={setMap} center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
+                    <TileLayer
+                        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                </MapContainer>
                 </div>
             </div>
-        );
+        </div>
+    );
 }
 
 export default Loc;
