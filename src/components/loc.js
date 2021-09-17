@@ -66,7 +66,7 @@ const Loc = (props) => {
                 event.target.classList.add('active');
                 const clickedData = JSON.parse(event.target.getAttribute("data"));
                 const position = new L.LatLng(clickedData.lat, clickedData.lon);
-                map.setView(position, 17);
+                map.flyTo(position, 17);
             });
             const position = new L.LatLng(result.lat, result.lon);
             currentMarkers.push(new L.marker(position).addTo(map));
