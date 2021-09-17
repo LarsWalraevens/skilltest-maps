@@ -1,11 +1,11 @@
-import React, { Component, useState,useEffect, useRef, ReactDOM } from 'react';
-import {MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import React from 'react';
+import {MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 // Ant
-import { Input, AutoComplete, List } from 'antd';
+import { Input } from 'antd';
 import * as L from "leaflet";
 import 'antd/dist/antd.css'
 const { Search } = Input;
@@ -25,7 +25,6 @@ const Loc = (props) => {
     const defaultZoom= 10;
     let suggestions = [];
     const resultList = document.getElementById('result-list');
-    const list = document.getElementById('list');
     const currentMarkers = [];   
 
     const onSearch = (searchText) => {
@@ -70,8 +69,6 @@ const Loc = (props) => {
                 const position = new L.LatLng(clickedData.lat, clickedData.lon);
                 map.setView(position, 17);
             })
-            // list.setAttribute("dataSource", [arrayList]);
-            // console.log(arrayList);
             const position = new L.LatLng(result.lat, result.lon);
             currentMarkers.push(new L.marker(position).addTo(map));
             resultList.appendChild(li);
@@ -87,13 +84,6 @@ const Loc = (props) => {
             <div className="map-result">
                 <div id="result-list">
                     <h2>List of results</h2>
-                    {/* <List id="list" size="small" bordered renderItem={item => <List.Item>{item}</List.Item>} /> */}
-                    {/* <List
-      size="small"
-      bordered
-      dataSource={["something"]}
-      renderItem={item => <List.Item>{item}</List.Item>}
-    /> */}
                 </div>
                 <div id="result-map" style={{height:"80vh"}}>
                 <MapContainer whenCreated={setMap} center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
