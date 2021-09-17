@@ -16,10 +16,8 @@
 #result-list {
   width: 30%;
   padding-right: 40px;
-}
-
-#result-list ul {
-  text-align: left;
+  text-align: left;  
+  padding-bottom: 150px;
 }
 
 #result-list li {
@@ -40,6 +38,7 @@
 
 #result-map {
   width: 70%;
+  height: 100%;
 }
 
 .App-logo {
