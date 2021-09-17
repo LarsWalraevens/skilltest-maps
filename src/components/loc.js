@@ -17,7 +17,7 @@ const Loc = (props) => {
     
     const [map, setMap] = React.useState();
     const defaultCenter = [51.505, -0.09];
-    const defaultZoom= 13;
+    const defaultZoom= 10;
     let suggestions = [];
     const searchInput = document.getElementById('search');
     const resultList = document.getElementById('result-list');
@@ -38,7 +38,7 @@ const Loc = (props) => {
     function SetResultList(parsedResult) {
         
         if(resultList!== null) {
-            resultList.innerHTML = "";            
+            resultList.innerHTML = "<h2>List of results</h2>";            
         }
 
         for (const marker of currentMarkers) {
@@ -69,10 +69,10 @@ const Loc = (props) => {
                 console.log((event.target));
                 const position = new L.LatLng(clickedData.lat, clickedData.lon);
                 console.log(map)
-                map.flyTo(position, 10);
+                map.setView(position, 17);
             })
-            const position = new L.LatLng(result.lat, result.lon);
             // currentMarkers.push(new L.marker(position).addTo(map));
+            const position = new L.LatLng(result.lat, result.lon);
             resultList.appendChild(li);
         }
     }
@@ -82,27 +82,30 @@ const Loc = (props) => {
     }
 
         return (
-            <div id='loc'>
+            <div id='loc' style={{marginTop:"100px"}}>
+                <h1>Look up a place</h1>
                 <div>
-                    <Search placeholder="Search" onSearch={onSearch} style={{ width: 200 }} />  
+                    <Search placeholder="Search" onSearch={onSearch} style={{ width: 400 }} />  
                 </div>
-                <div id="result-list">
-                    .
-                    {/* <ul>
-                        {
-                            // (suggestions).map((item, index) => {
-                            //     return (<li onClick={()=>handleSetView(item.lat, item.lon)}>{item.display_name}</li>);
-                            // })
-                        }
-                    </ul> */}
-                </div>
-                <div style={{height:"50vh"}}>
-                <MapContainer whenCreated={setMap} center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
-                    <TileLayer
-                        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                </MapContainer>
+                <div className="map-result">
+                    <div id="result-list">
+                        <h2>List of results</h2>
+                        {/* <ul>
+                            {
+                                // (suggestions).map((item, index) => {
+                                //     return (<li onClick={()=>handleSetView(item.lat, item.lon)}>{item.display_name}</li>);
+                                // })
+                            }
+                        </ul> */}
+                    </div>
+                    <div id="result-map" style={{height:"50vh"}}>
+                    <MapContainer whenCreated={setMap} center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
+                        <TileLayer
+                            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                    </MapContainer>
+                    </div>
                 </div>
             </div>
         );

@@ -5,6 +5,27 @@
   height: 50vh;
 }
 
+.map-result {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  position: relative;
+  margin: 20px 200px;
+}
+
+#result-list {
+  width: 30%;
+  padding-right: 40px;
+}
+
+#result-list ul {
+  text-align: left;
+}
+
+#result-map {
+  width: 70%;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
