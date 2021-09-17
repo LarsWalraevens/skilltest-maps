@@ -3,6 +3,8 @@ import { ReactOsmGeocoding } from '@paraboly/react-osm-geocoding';
 import {MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { useLeaflet } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import $ from 'jquery';
 
 // Ant
@@ -12,18 +14,23 @@ import * as L from "leaflet";
 import 'antd/dist/antd.css'
 const { Search } = Input;
 
-const Loc = (props) => {
+delete L.Icon.Default.prototype._getIconUrl;
 
-    
+// Cant find??
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+    iconUrl: require('leaflet/dist/images/marker-icon.png'),
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+});
+
+const Loc = (props) => {    
     const [map, setMap] = React.useState();
     const defaultCenter = [51.505, -0.09];
     const defaultZoom= 10;
     let suggestions = [];
     const resultList = document.getElementById('result-list');
     const list = document.getElementById('list');
-    const currentMarkers = [];
-
-    
+    const currentMarkers = [];   
 
     const onSearch = (searchText) => {
         fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + searchText)
@@ -35,6 +42,8 @@ const Loc = (props) => {
     };
     
     function SetResultList(parsedResult) {        
+        let arrayList = [];
+
         if(resultList!== null) {
             resultList.innerHTML = "<h2>List of results</h2>";            
         }
@@ -42,9 +51,8 @@ const Loc = (props) => {
         for (const marker of currentMarkers) {
             map.removeLayer(marker);
         }
-
-        let arrayList = [];
-
+        
+        map.flyTo(new L.LatLng(20.13847, 1.40625), 2);
         for (const result of parsedResult) {
             const li = document.createElement('li');
             li.classList.add('list-group-item', 'list-group-item-action');
@@ -68,6 +76,8 @@ const Loc = (props) => {
             })
             // list.setAttribute("dataSource", [arrayList]);
             // console.log(arrayList);
+            const position = new L.LatLng(result.lat, result.lon);
+            currentMarkers.push(new L.marker(position).addTo(map));
             resultList.appendChild(li);
         }
     }
@@ -76,7 +86,7 @@ const Loc = (props) => {
         <div id='loc' style={{marginTop:"100px"}}>
             <h1>Look up a place</h1>
             <div>
-                <Search placeholder="Search" onSearch={onSearch} style={{ width: 400 }} />  
+                <Search placeholder="Street, adress, city, ..." onSearch={onSearch} style={{ width: 400 }} />  
             </div>
             <div className="map-result">
                 <div id="result-list">
@@ -92,9 +102,15 @@ const Loc = (props) => {
                 <div id="result-map" style={{height:"50vh"}}>
                 <MapContainer whenCreated={setMap} center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
                     <TileLayer
-                        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+                    url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
                     />
+                    <Marker position={defaultCenter}>
+                        <Popup>
+                        A pretty CSS3 popup. <br /> Easily customizable.
+                        </Popup>
+                    </Marker>
+
                 </MapContainer>
                 </div>
             </div>
