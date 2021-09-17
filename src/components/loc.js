@@ -44,8 +44,7 @@ const Loc = (props) => {
             map.removeLayer(marker);
         }
         
-        // Reset to full map (not that fast)
-        // map.flyTo(new L.LatLng(20.13847, 1.40625), 2);
+        map.setView(new L.LatLng(20.13847, 1.40625), 2);
 
         for (const result of parsedResult) {
 
