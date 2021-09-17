@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import $ from 'jquery';
 
 // Ant
-import { Button, Tooltip, Input, AutoComplete } from 'antd';
+import { Button, Tooltip, Input, AutoComplete, List } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import * as L from "leaflet";
 import 'antd/dist/antd.css'
@@ -19,9 +19,8 @@ const Loc = (props) => {
     const defaultCenter = [51.505, -0.09];
     const defaultZoom= 10;
     let suggestions = [];
-    const searchInput = document.getElementById('search');
     const resultList = document.getElementById('result-list');
-    const mapContainer = document.getElementById('map-container');
+    const list = document.getElementById('list');
     const currentMarkers = [];
 
     
@@ -35,8 +34,7 @@ const Loc = (props) => {
             }); 
     };
     
-    function SetResultList(parsedResult) {
-        
+    function SetResultList(parsedResult) {        
         if(resultList!== null) {
             resultList.innerHTML = "<h2>List of results</h2>";            
         }
@@ -44,7 +42,9 @@ const Loc = (props) => {
         for (const marker of currentMarkers) {
             map.removeLayer(marker);
         }
-        // map.flyTo(new L.LatLng(20.13847, 1.40625), 2);
+
+        let arrayList = [];
+
         for (const result of parsedResult) {
             const li = document.createElement('li');
             li.classList.add('list-group-item', 'list-group-item-action');
@@ -55,6 +55,8 @@ const Loc = (props) => {
                     lon: result.lon
                 }, undefined, 2));
 
+            arrayList.push(result.display_name);
+
             li.addEventListener('click', (event) => {
                 for(const child of resultList.children) {
                     child.classList.remove('active');
@@ -64,8 +66,8 @@ const Loc = (props) => {
                 const position = new L.LatLng(clickedData.lat, clickedData.lon);
                 map.setView(position, 17);
             })
-            // currentMarkers.push(new L.marker(position).addTo(map));
-            const position = new L.LatLng(result.lat, result.lon);
+            // list.setAttribute("dataSource", [arrayList]);
+            // console.log(arrayList);
             resultList.appendChild(li);
         }
     }
@@ -79,6 +81,13 @@ const Loc = (props) => {
             <div className="map-result">
                 <div id="result-list">
                     <h2>List of results</h2>
+                    {/* <List id="list" size="small" bordered renderItem={item => <List.Item>{item}</List.Item>} /> */}
+                    {/* <List
+      size="small"
+      bordered
+      dataSource={["something"]}
+      renderItem={item => <List.Item>{item}</List.Item>}
+    /> */}
                 </div>
                 <div id="result-map" style={{height:"50vh"}}>
                 <MapContainer whenCreated={setMap} center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
