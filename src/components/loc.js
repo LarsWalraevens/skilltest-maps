@@ -20,6 +20,7 @@ const Loc = () => {
                 setResultsList(parsedResult);
                 setClicked(undefined);
             }); 
+            resultList.innerHTML = "<h2>List of results</h2> <div>Options for: '" + searchText + "'</div>";;
     };
   
     return (
