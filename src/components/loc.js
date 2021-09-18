@@ -32,14 +32,12 @@ const Loc = () => {
     const [clicked, setClicked] = useState();
     const [searchText, setSearchText] =useState();
 
-    const onSearch = (searchText) => {
-        fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + searchText)
-            .then(result => result.json())
-            .then(parsedResult => {
-                setResultsList(parsedResult);
-                setClicked(undefined);
-            }); 
-            setSearchText(searchText);
+    const onSearch = async (searchText) => {
+        const response = await fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + searchText)
+        const result = await response.json()
+        setResultsList(result);
+        setClicked(undefined);
+        setSearchText(searchText);
     };
   
     useEffect(()=> {
