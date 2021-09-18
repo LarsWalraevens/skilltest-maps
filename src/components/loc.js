@@ -5,13 +5,32 @@ import 'leaflet/dist/leaflet.css';
 // Ant
 import { Input } from 'antd';
 import 'antd/dist/antd.css'
+import { useEffect } from 'react/cjs/react.development';
+
+import * as L from "leaflet";
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
 const { Search } = Input;
+
+
+delete L.Icon.Default.prototype._getIconUrl;
+
+let DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
+
 
 const Loc = () => {    
     const defaultCenter = [50.6402809, 4.6667145];
     const defaultZoom= 10; 
+    const [map, setMap] = useState(); 
     const [resultsList, setResultsList] = useState();
     const [clicked, setClicked] = useState();
+    const [searchText, setSearchText] =useState();
 
     const onSearch = (searchText) => {
         fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + searchText)
@@ -20,9 +39,23 @@ const Loc = () => {
                 setResultsList(parsedResult);
                 setClicked(undefined);
             }); 
-            resultList.innerHTML = "<h2>List of results</h2> <div>Options for: '" + searchText + "'</div>";;
+            setSearchText(searchText);
     };
   
+    useEffect(()=> {
+        if(map) {
+            if(clicked) {
+                map.flyTo([clicked.lat, clicked.lon], 16);
+            } else if(resultsList && resultsList?.length) {
+                const coordinates = resultsList.map((item) => ([item.lat, item.lon]));
+                map.fitBounds(coordinates);
+            } else {
+                map.flyTo(defaultCenter, 12);
+            }
+            
+        }
+
+    },[map, clicked, defaultCenter, resultsList])
     return (
         <div id='loc' style={{marginTop:"100px"}}>
             <h1>Look up a place</h1>
@@ -32,6 +65,7 @@ const Loc = () => {
             <div className="map-result">
                 <div id="result-list">
                     <h2>List of results</h2>
+                    { searchText && <div>Options for: '{searchText}'</div> }
                     <ul>
                         {
                             resultsList && resultsList.map((item, key) => 
@@ -45,7 +79,7 @@ const Loc = () => {
                     </ul>
                 </div>
                 <div id="result-map" style={{height:"80vh"}}>
-                <MapContainer center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
+                <MapContainer whenCreated={setMap} center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
                     <TileLayer
                     attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
                     url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
