@@ -1,17 +1,21 @@
-import React from 'react';
-import {MapContainer, TileLayer, Marker } from 'react-leaflet';
+import React, { useState } from 'react';
+import { useEffect } from 'react/cjs/react.development';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import * as L from "leaflet";
 import 'leaflet/dist/leaflet.css';
+
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 // Ant
-import { Input, AutoComplete, List, Col, Row } from 'antd';
-import * as L from "leaflet";
+import { Input } from 'antd';
 import 'antd/dist/antd.css'
+
 const { Search } = Input;
 
 // Markers fix
 delete L.Icon.Default.prototype._getIconUrl;
+
 let DefaultIcon = L.icon({
     iconUrl: icon,
     shadowUrl: iconShadow
@@ -19,81 +23,81 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-
 const Loc = (props) => {    
-    const [map, setMap] = React.useState();
     const defaultCenter = [50.6402809, 4.6667145];
     const defaultZoom= 10;
-    let suggestions = [];
-    const resultList = document.getElementById('result-list');
-    const currentMarkers = [];   
+    const [map, setMap] = useState();
+    const [resultsList, setResultsList] = useState();
+    const [clicked, setClicked] = useState();
+    const [searchText, setSearchText] =useState();
 
-    const onSearch = (searchText) => {
-        fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + searchText)
-            .then(result => result.json())
-            .then(parsedResult => {
-                suggestions= parsedResult;
-                SetResultList(parsedResult);
-            }); 
-            resultList.innerHTML = "<h2>List of results</h2> <div>Options for: '" + searchText + "'</div>";;
+    const onSearch = async (searchText) => {
+        const response = await fetch('https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=' + searchText);
+        const result = await response.json();
+        setResultsList(result);
+        setClicked(undefined);
+        setSearchText(searchText);
     };
-    
-    function SetResultList(parsedResult) {  
 
-        for (const marker of currentMarkers) {
-            map.removeLayer(marker);
+    useEffect(()=> {
+        if(map) {
+            if(clicked) {
+                map.flyTo([clicked.lat, clicked.lon], 16);
+            } else if(resultsList && resultsList?.length) {
+                const coordinates = resultsList.map((item) => ([item.lat, item.lon]));
+                map.fitBounds(coordinates);
+            } else {
+                map.flyTo(defaultCenter, 12);
+            }
+            
         }
-        
-        map.setView(new L.LatLng(20.13847, 1.40625), 2);
 
-        for (const result of parsedResult) {
-
-            // Create li for every suggestion
-            const li = document.createElement('li');
-            li.classList.add('list-group-item', 'list-group-item-action');
-            li.innerHTML = result.display_name;
-            li.setAttribute("data", JSON.stringify({
-                displayName: result.display_name,
-                lat: result.lat,
-                lon: result.lon
-            }, undefined, 2));
-
-            // Add click event
-            li.addEventListener('click', (event) => {
-                for(const child of resultList.children) {
-                    child.classList.remove('active');
-                }
-                event.target.classList.add('active');
-                const clickedData = JSON.parse(event.target.getAttribute("data"));
-                const position = new L.LatLng(clickedData.lat, clickedData.lon);
-                map.flyTo(position, 17);
-            });
-            const position = new L.LatLng(result.lat, result.lon);
-            currentMarkers.push(new L.marker(position).addTo(map));
-            resultList.appendChild(li);
-        }
-    }
+    },[map, clicked, defaultCenter, resultsList]);
   
     return (
         <div id='loc' style={{marginTop:"100px"}}>
-            <Row className="map-result">
-                <Col span={5} id="result-list">
-                </Col>
-                <Col span={19} id="result-map" style={{height:"80vh"}}>
-                    <div style={{textAlign:"left", marginBottom:"40px"}}>
-                        <h1>Look up a place</h1>
-                        <div>
-                            <Search placeholder="Street, adress, city, ..." onSearch={onSearch} style={{ width: 400 }} />  
-                        </div>
-                    </div>
-                    <MapContainer style={{boxShadow: "4px 4px 5px -2px rgb(0 0 0 / 55%)", borderRadius:"10px"}} whenCreated={setMap} center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
-                        <TileLayer
+            <h1>Look up a place</h1>
+            <div>
+                <Search placeholder="Street, adress, city, ..." onSearch={onSearch} style={{ width: 400 }} />  
+            </div>
+            <div className="map-result">
+                <div id="result-list">
+                    <h2>List of results</h2>
+                    { searchText && <div>Options for: '{searchText}'</div> }
+                    <ul>
+                        {
+                            resultsList && resultsList.map((item, key) => 
+                                <li key={key} className="list-group-item list-group-item-action" onClick={() => {
+                                    setClicked(item)
+                                }}>
+                                    {item.display_name}
+                                </li>
+                            )
+                        }
+                    </ul>
+                </div>
+                <div id="result-map" style={{height:"80vh"}}>
+                <MapContainer whenCreated={setMap} center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={true}>
+                    <TileLayer
                         attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
                         url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
                         />
-                    </MapContainer>
-                </Col>
-            </Row>
+                    
+                    {
+                        // If no item is selected in list of results, then show all markers
+                        clicked === undefined && resultsList && resultsList.map((item, key) => (
+                            <Marker key={key} position={[item.lat, item.lon]} />
+                        )) 
+                    }
+
+                    {
+                        // If item is selected in list of result, only show 1 marker
+                        clicked && <Marker position={[clicked.lat, clicked.lon]} />
+                    }
+
+                </MapContainer>
+                </div>
+            </div>
         </div>
     );
 }
