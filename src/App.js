@@ -1,5 +1,5 @@
 import './App.css';
-import Loc from './components/loc.js';
+import Loc from './Loc.js';
 import { BrowserRouter as Router,Switch,Route } from "react-router-dom";
 
 function App() {
